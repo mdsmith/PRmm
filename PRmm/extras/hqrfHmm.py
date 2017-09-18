@@ -56,10 +56,11 @@ class DromedaryHQRegionFinder(object):
                           [  0,   0,   1,   0],   # PostQuiet ->
                           [  0,   0,   0,   1] ]) # PostActive ->
 
+        e = 10 ** -4
         # emission probabilities
-        emit = np.array([[ 0.25, 0.25, 0.50 ],    # Emit | Pre
-                         [ 0.20, 0.75, 0.05 ],    # Emit | HQ
-                         [ 0.70, 0.15, 0.15 ],    # Emit | PostQuiet
+        emit = np.array([[ 0.25, 0.25,   0.50 ],    # Emit | Pre
+                         [ 0.16, 0.84-e, e    ],    # Emit | HQ
+                         [ 0.90, 0.10-e, e    ],    # Emit | PostQuiet
                          [ 0.25, 0.25, 0.50 ] ])  # Emit | PostActive
         #                   A0    A1    A2
 

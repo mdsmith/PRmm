@@ -32,7 +32,9 @@ FEATURE_DESCS = \
     # Pulse features
     FeatureDesc("startFrame"        , "StartFrame"        , "sf", "identity", np.uint32, np.uint32),
     FeatureDesc("pulseWidthFrames"  , "PulseCallWidth"    , "px", "identity", np.uint16, np.uint16),
-    FeatureDesc("prePulseFrames"    , "PrePulseFrames"    , "pd", "identity", np.uint16, np.uint16)
+    FeatureDesc("prePulseFrames"    , "PrePulseFrames"    , "pd", "identity", np.uint16, np.uint16),
+    FeatureDesc("pkMid"             , "PkMid"             , "pm", "identity", np.uint16, np.uint16),
+    FeatureDesc("pkMean"            , "PkMean"            , "pa", "identity", np.uint16, np.uint16),
  ]
 
 _possibleFeatureManifestNames = set([ pd.nameInManifest
