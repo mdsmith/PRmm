@@ -27,6 +27,7 @@ def loadBazViewerHDF5(h5Filename, frameRateHz=80.0):
     df["HalfSandwichRate"] = df.NUM_HALF_SANDWICHES.astype(np.float) /  df.NUM_PULSES
     df["SandwichRate"] = df.NUM_SANDWICHES.astype(np.float) /  df.NUM_PULSES
     df["PulseRate"] = df.NUM_PULSES.astype(np.float) / (df.NUM_FRAMES / frameRateHz)
+    df["BaseRate"] = df.NUM_BASES.astype(np.float) / (df.NUM_FRAMES / frameRateHz)
     df["LabelStutterRate"] = df.NUM_PULSE_LABEL_STUTTERS.astype(np.float) / df.NUM_PULSES
     df["MeanPulseWidth"] = df.PULSE_WIDTH / df.NUM_PULSES
     return df
@@ -157,6 +158,13 @@ class EnhancedHQRegionFinder(DromedaryHQRegionFinder):
             return basicHQR
 
 
+def dfnp(arr, i):
+    try:
+        return arr.iloc[i]
+    except AttributeError:
+        # np ndarray has no iloc attribute:
+        return arr[i]
+
 class EnhancedHQRegionFinder2(EnhancedHQRegionFinder):
     """
     Same as EnhancedHQRegionFinder, but without the rule of 1 full sandwich => A2
@@ -164,11 +172,11 @@ class EnhancedHQRegionFinder2(EnhancedHQRegionFinder):
     def labelWindows(self, dfZ):
         labels = [-1] * len(dfZ)
         for i in xrange(len(dfZ)):
-            if   (dfZ.PulseRate.iloc[i]        <= 0.5 or
-                  dfZ.LabelStutterRate.iloc[i] >= 0.6 or
-                  dfZ.MeanPulseWidth.iloc[i]   <= 4.0):
+            if   (dfnp(dfZ.PulseRate, i)        <= 0.5 or
+                  dfnp(dfZ.LabelStutterRate, i) >= 0.6 or
+                  dfnp(dfZ.MeanPulseWidth, i)   <= 4.0):
                 labels[i] = A0
-            elif ((dfZ.HalfSandwichRate.iloc[i] >= 0.06)):
+            elif dfnp(dfZ.HalfSandwichRate, i) >= 0.06:
                 labels[i] = A2
             else:
                 labels[i] = A1
