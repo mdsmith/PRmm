@@ -54,15 +54,15 @@ class DromedaryHQRegionFinder(object):
         # Transition probabilities
         trans = np.array([[1-a,   a,   0,   0],   # Pre ->
                           [  0, 1-a, a/2, a/2],   # HQ  ->
-                          [  0,   0,   1,   0],   # PostQuiet ->
-                          [  0,   0,   0,   1] ]) # PostActive ->
+                          [  0,   0, 1-a,   a],   # PostQuiet ->
+                          [  0,   0,   a, 1-a] ]) # PostActive ->
 
         e = 10 ** -4
         # emission probabilities
         emit = np.array([[ 0.25, 0.25,   0.50 ],    # Emit | Pre
                          [ 0.16, 0.84-e, e    ],    # Emit | HQ
                          [ 0.90, 0.10-e, e    ],    # Emit | PostQuiet
-                         [ 0.25, 0.25, 0.50 ] ])  # Emit | PostActive
+                         [ 0.25, 0.25, 0.50 ] ])    # Emit | PostActive
         #                   A0    A1    A2
 
         # Start state distribution
@@ -81,6 +81,9 @@ class DromedaryHQRegionFinder(object):
 
     def findHQWindowSpan(self, dfZ):
         labelSequence = self.labelWindows(dfZ)
+        return self.labels2span(labelSequence)
+
+    def labels2span(self, labelSequence):
         decoded = self.decodeHQR(labelSequence)
         if 1 not in decoded:
             return (0, 0)

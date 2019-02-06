@@ -118,7 +118,9 @@ class ZmwReadStitcher(object):
             raise IndexError, "Requested hole number has no entry in this BAM file"
         subreads = self.subreadsF.readsByHoleNumber(holeNumber)
         scraps = self.scrapsF.readsByHoleNumber(holeNumber)
-        combined = sorted(subreads + scraps, key=lambda x: x.qStart)
+        combined = filter(lambda x: x.qStart != x.qEnd, subreads + scraps)
+        combined = sorted(combined, key=lambda x: x.qEnd)
+        combined = sorted(combined, key=lambda x: x.qStart)
         return StitchedZmw(self, combined)
 
     @property
@@ -192,7 +194,8 @@ class StitchedZmw(BaseRegionsMixin):
 
     def __init__(self, reader, bamRecords):
         if not _recordsFormReadPartition(bamRecords):
-            raise Exception, "Records do not form a contiguous span of a ZMW!"
+            raise Exception, ("Records for {} do not form a contiguous span "
+                              "of a ZMW!".format(bamRecords[0].HoleNumber))
         self.reader = reader
         self.holeNumber = bamRecords[0].HoleNumber
         self.bamRecords = bamRecords
